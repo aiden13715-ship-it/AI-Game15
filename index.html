@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NEON QUICKDRAW: HUMAN VS AI</title>
+  <title>NEON QUICKDRAW: COWBOY VS ROBOT</title>
   <style>
     :root{
-      --bg0:#030513;
-      --bg1:#070a20;
-      --panel: rgba(8, 12, 34, .62);
-      --panel2: rgba(5, 8, 26, .55);
+      --bg0:#040615;
+      --bg1:#070a22;
+      --panel: rgba(8, 12, 34, .66);
       --line: rgba(255,255,255,.12);
-      --txt: rgba(241,246,255,.95);
-      --muted: rgba(241,246,255,.72);
+      --txt: rgba(245,250,255,.95);
+      --muted: rgba(245,250,255,.72);
 
       --cyan:#24f6ff;
       --mag:#b25bff;
@@ -20,8 +19,8 @@
       --amber:#ffd28a;
       --red:#ff6b8a;
 
-      --r: 20px;
-      --shadow: 0 22px 70px rgba(0,0,0,.45);
+      --r: 18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.48);
     }
 
     *{ box-sizing:border-box; }
@@ -38,28 +37,26 @@
       overflow-x:hidden;
     }
 
-    /* Animated aurora */
+    /* Neon grid + scanlines (futuristic, but game is pixel art) */
     .aurora{
       position: fixed; inset:-60px;
       z-index:-4;
       background:
-        radial-gradient(720px 280px at 22% 28%, rgba(36,246,255,.22), transparent 60%),
-        radial-gradient(680px 260px at 78% 18%, rgba(178,91,255,.18), transparent 60%),
+        radial-gradient(720px 280px at 22% 28%, rgba(36,246,255,.20), transparent 60%),
+        radial-gradient(680px 260px at 78% 18%, rgba(178,91,255,.16), transparent 60%),
         radial-gradient(680px 260px at 55% 84%, rgba(125,255,156,.12), transparent 60%);
       filter: blur(16px);
-      opacity:.9;
+      opacity:.85;
       animation: drift 10.5s ease-in-out infinite alternate;
     }
     @keyframes drift{
       0%{ transform: translate3d(-14px,-10px,0) scale(1); }
       100%{ transform: translate3d(14px,12px,0) scale(1.03); }
     }
-
-    /* Moving grid overlay */
     .bgGrid{
       position: fixed; inset:0;
       z-index:-3;
-      opacity:.22;
+      opacity:.20;
       background-image:
         linear-gradient(to right, rgba(255,255,255,.09) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255,255,255,.07) 1px, transparent 1px);
@@ -71,8 +68,6 @@
       from{ background-position: 0 0, 0 0; }
       to{ background-position: 0 170px, 170px 0; }
     }
-
-    /* Scanlines */
     .scanlines{
       position: fixed; inset:0;
       z-index:-2;
@@ -87,14 +82,6 @@
       opacity:.40;
     }
 
-    /* Confetti layer */
-    canvas#fx{
-      position: fixed;
-      inset: 0;
-      pointer-events:none;
-      z-index: 60;
-    }
-
     header{
       position: sticky;
       top:0;
@@ -102,25 +89,14 @@
       background: rgba(6,10,34,.55);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,.10);
-      padding: 18px 16px;
-      animation: dropIn .55s ease-out both;
+      padding: 16px 14px;
     }
-    @keyframes dropIn{
-      from{ opacity:0; transform: translateY(-14px); }
-      to{ opacity:1; transform: translateY(0); }
-    }
-    .wrap{ max-width: 1060px; margin:0 auto; }
-    .titleRow{
-      display:flex;
-      gap: 14px;
-      align-items:flex-start;
-      justify-content:space-between;
-      flex-wrap:wrap;
-    }
+    .wrap{ max-width: 1120px; margin:0 auto; }
+    .titleRow{ display:flex; gap: 14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; }
     h1{
       margin:0;
       font-size: 20px;
-      letter-spacing:.4px;
+      letter-spacing:.45px;
       text-transform: uppercase;
     }
     .subtitle{
@@ -130,91 +106,52 @@
       line-height: 1.35;
     }
 
-    /* Glitch text effect */
-    .glitch{
-      position: relative;
-      display: inline-block;
+    /* Pixel-ish heading vibe */
+    .pixel{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      letter-spacing: .9px;
       text-shadow:
-        0 0 14px rgba(36,246,255,.30),
-        0 0 18px rgba(178,91,255,.22);
-    }
-    .glitch::before,
-    .glitch::after{
-      content: attr(data-text);
-      position:absolute;
-      left:0; top:0;
-      opacity:.45;
-      clip-path: inset(0 0 0 0);
-      pointer-events:none;
-    }
-    .glitch::before{
-      transform: translate(1px, -1px);
-      color: rgba(36,246,255,.95);
-      animation: glitchA 2.6s infinite linear alternate-reverse;
-    }
-    .glitch::after{
-      transform: translate(-1px, 1px);
-      color: rgba(178,91,255,.95);
-      animation: glitchB 2.3s infinite linear alternate-reverse;
-    }
-    @keyframes glitchA{
-      0%{ clip-path: inset(0 0 86% 0); }
-      20%{ clip-path: inset(10% 0 58% 0); }
-      40%{ clip-path: inset(44% 0 30% 0); }
-      60%{ clip-path: inset(70% 0 10% 0); }
-      80%{ clip-path: inset(16% 0 66% 0); }
-      100%{ clip-path: inset(0 0 88% 0); }
-    }
-    @keyframes glitchB{
-      0%{ clip-path: inset(82% 0 0 0); }
-      25%{ clip-path: inset(55% 0 18% 0); }
-      50%{ clip-path: inset(26% 0 46% 0); }
-      75%{ clip-path: inset(10% 0 74% 0); }
-      100%{ clip-path: inset(86% 0 0 0); }
+        0 0 12px rgba(36,246,255,.26),
+        0 0 14px rgba(178,91,255,.18);
     }
 
     main{
-      max-width: 1060px;
+      max-width: 1120px;
       margin:0 auto;
-      padding: 16px;
+      padding: 14px;
       display:grid;
-      gap: 14px;
+      gap: 12px;
     }
     .grid2{
       display:grid;
-      gap: 14px;
+      gap: 12px;
       grid-template-columns: 1fr;
     }
-    @media (min-width: 920px){
-      .grid2{ grid-template-columns: 1.25fr .75fr; }
+    @media (min-width: 980px){
+      .grid2{ grid-template-columns: 1.35fr .65fr; }
     }
 
     .card{
       background: var(--panel);
       border: 1px solid rgba(255,255,255,.12);
       border-radius: var(--r);
-      padding: 16px;
+      padding: 14px;
       box-shadow: var(--shadow);
       position: relative;
       overflow:hidden;
-      animation: cardIn .65s ease-out both;
     }
     .card::before{
       content:"";
       position:absolute; inset:-2px;
       background:
-        radial-gradient(520px 160px at 20% 10%, rgba(36,246,255,.18), transparent 60%),
-        radial-gradient(520px 160px at 80% 0%, rgba(178,91,255,.14), transparent 60%),
-        radial-gradient(620px 160px at 50% 100%, rgba(125,255,156,.10), transparent 60%);
-      opacity:.85;
+        radial-gradient(520px 160px at 18% 10%, rgba(36,246,255,.16), transparent 60%),
+        radial-gradient(520px 160px at 82% 0%, rgba(178,91,255,.12), transparent 60%),
+        radial-gradient(620px 160px at 50% 100%, rgba(125,255,156,.09), transparent 60%);
+      opacity:.9;
       filter: blur(10px);
       pointer-events:none;
     }
     .card > *{ position: relative; }
-    @keyframes cardIn{
-      from{ opacity:0; transform: translateY(14px) scale(.985); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
-    }
 
     .hud{
       display:flex;
@@ -240,7 +177,7 @@
 
     label{ display:block; font-size:12px; color: var(--muted); margin-bottom: 6px; }
 
-    select, button, input[type="checkbox"]{
+    select, button{
       border-radius: 14px;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(5, 8, 28, .68);
@@ -269,16 +206,7 @@
       overflow:hidden;
       transition: transform .12s ease, filter .18s ease;
     }
-    button::after{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(240px 70px at var(--x,20%) var(--y,30%), rgba(255,255,255,.40), transparent 62%);
-      opacity:0;
-      transition: opacity .18s ease;
-      pointer-events:none;
-    }
     button:hover{ transform: translateY(-1px); filter: brightness(1.08); }
-    button:hover::after{ opacity:.60; }
     button:active{ transform: translateY(0) scale(.99); }
     button:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
 
@@ -289,119 +217,46 @@
       background: linear-gradient(135deg, rgba(36,246,255,.25), rgba(255,255,255,.08));
     }
 
-    /* Arena */
+    /* Arena: crisp pixel canvas */
     .arena{
       margin-top: 10px;
-      border-radius: 22px;
+      border-radius: 18px;
       border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
+      background: rgba(0,0,0,.20);
       box-shadow: 0 0 0 1px rgba(36,246,255,.06) inset;
       overflow:hidden;
-      position: relative;
     }
-    .arena::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: linear-gradient(90deg, transparent, rgba(36,246,255,.10), transparent);
-      transform: translateX(-70%);
-      animation: sweep 2.6s linear infinite;
-      pointer-events:none;
-      opacity:.9;
-    }
-    @keyframes sweep{
-      from{ transform: translateX(-80%); }
-      to{ transform: translateX(80%); }
-    }
-    .arenaInner{
-      padding: 18px;
+    .canvasWrap{
       display:grid;
-      gap: 14px;
-      justify-items:center;
-      text-align:center;
-    }
-
-    .signal{
-      width: min(680px, 100%);
-      border-radius: 20px;
-      padding: 18px 16px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(6,10,34,.60);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      position: relative;
-      overflow:hidden;
-    }
-    .signal::after{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(480px 120px at 50% 10%, rgba(255,255,255,.14), transparent 60%);
-      opacity:.75;
-      pointer-events:none;
-    }
-    .signal > *{ position: relative; }
-
-    .bigSignal{
-      font-size: 38px;
-      font-weight: 1000;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin: 0;
-    }
-    .hint{
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
-    .pulseRing{
-      width: 120px; height: 120px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: radial-gradient(circle at 50% 40%, rgba(36,246,255,.22), rgba(178,91,255,.10), transparent 70%);
-      box-shadow: 0 0 30px rgba(36,246,255,.18);
-      position: relative;
-      animation: ring 1.35s ease-in-out infinite;
-    }
-    .pulseRing::before{
-      content:"";
-      position:absolute; inset:-10px;
-      border-radius:999px;
-      border: 1px solid rgba(36,246,255,.18);
-      filter: blur(.2px);
-      animation: ring2 1.35s ease-in-out infinite;
-    }
-    @keyframes ring{
-      0%,100%{ transform: scale(1); opacity:.85; }
-      50%{ transform: scale(1.06); opacity:1; }
-    }
-    @keyframes ring2{
-      0%,100%{ transform: scale(1); opacity:.35; }
-      50%{ transform: scale(1.12); opacity:.55; }
-    }
-
-    .stats{
-      display:grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .statBox{
-      border-radius: 18px;
+      place-items:center;
       padding: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
     }
-    .statLabel{ font-size:12px; color: var(--muted); }
-    .statValue{ font-size: 18px; font-weight: 950; margin-top: 4px; }
+    canvas#game{
+      width: 100%;
+      max-width: 880px;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      image-rendering: pixelated;
+    }
 
-    /* Log */
+    .controls{
+      margin-top: 10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .controls > *{ flex:1; min-width: 200px; }
+
     .log{
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12px;
       line-height: 1.45;
-      max-height: 290px;
+      max-height: 300px;
       overflow:auto;
       padding: 12px;
-      border-radius: 16px;
+      border-radius: 14px;
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.22);
     }
@@ -409,11 +264,10 @@
     .bad{ color: var(--red); }
     .warn{ color: var(--amber); }
 
-    /* Toast */
     .toast{
       position: fixed;
       left: 50%;
-      top: 78px;
+      top: 76px;
       transform: translateX(-50%);
       z-index: 55;
       padding: 10px 14px;
@@ -434,7 +288,6 @@
       100%{ opacity:0; transform: translateX(-50%) translateY(-7px) scale(.99); }
     }
 
-    /* Intro overlay */
     .intro{
       position: fixed; inset:0;
       z-index: 90;
@@ -442,41 +295,25 @@
       align-items:center;
       justify-content:center;
       padding: 16px;
-      background: rgba(0,0,0,.50);
+      background: rgba(0,0,0,.52);
       backdrop-filter: blur(12px);
     }
     .introCard{
-      width: min(980px, 100%);
-      border-radius: 24px;
-      padding: 16px;
+      width: min(1040px, 100%);
+      border-radius: 22px;
+      padding: 14px;
       border: 1px solid rgba(255,255,255,.16);
-      background: rgba(6,10,34,.68);
+      background: rgba(6,10,34,.72);
       box-shadow: 0 28px 80px rgba(0,0,0,.55);
       position: relative;
       overflow:hidden;
-      animation: introIn .65s ease-out both;
-    }
-    .introCard::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(520px 180px at 20% 10%, rgba(36,246,255,.22), transparent 60%),
-        radial-gradient(520px 180px at 85% 18%, rgba(178,91,255,.18), transparent 60%),
-        radial-gradient(520px 180px at 55% 90%, rgba(125,255,156,.12), transparent 60%);
-      filter: blur(10px);
-      opacity: .95;
-    }
-    .introCard > *{ position: relative; }
-    @keyframes introIn{
-      from{ opacity:0; transform: translateY(18px) scale(.98); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
     }
     .introTitle{
-      font-size: 22px;
+      margin:0 0 6px 0;
+      font-size: 20px;
       font-weight: 1000;
-      margin: 0 0 6px 0;
-      letter-spacing:.6px;
       text-transform: uppercase;
+      letter-spacing:.6px;
     }
     .introText{
       margin:0;
@@ -485,10 +322,8 @@
       line-height:1.4;
     }
     .chips{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top: 12px;
     }
     .chip{
       padding: 8px 10px;
@@ -505,12 +340,6 @@
       background: rgba(0,0,0,.20);
       margin: 0 2px;
     }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      *{ animation: none !important; transition: none !important; }
-      .aurora,.bgGrid{ display:none; }
-    }
   </style>
 </head>
 
@@ -519,40 +348,33 @@
   <div class="bgGrid"></div>
   <div class="scanlines"></div>
   <div class="toast" id="toast"></div>
-  <canvas id="fx"></canvas>
 
   <div class="intro" id="intro">
     <div class="introCard">
       <div class="row" style="align-items:flex-start;">
-        <div style="flex: 1.3; min-width: 260px;">
-          <div class="introTitle glitch" data-text="NEON QUICKDRAW: HUMAN VS AI">NEON QUICKDRAW: HUMAN VS AI</div>
+        <div style="flex:1.3; min-width:260px;">
+          <div class="introTitle pixel">NEON QUICKDRAW: COWBOY VS ROBOT</div>
           <p class="introText">
-            Wait for the signal. When <b>FIRE!</b> appears, react as fast as you can by clicking
-            <b>DRAW</b> or pressing <span class="kbd">Space</span>.
-            Click/press early and you get a <b>FALSE START</b> (automatic round loss).
+            Pixel-cinematic duel. Wait for <b>FIRE!</b> then press <span class="kbd">↓</span> (Down Arrow) or <span class="kbd">Space</span>.
+            If you press early, it’s a <b>FALSE START</b> and the robot wins the round.
           </p>
           <div class="chips">
-            <span class="chip">⚡ Futuristic neon UI</span>
-            <span class="chip">🎮 Best-of-9</span>
+            <span class="chip">🎬 Pixel cutscenes</span>
+            <span class="chip">⚡ Futuristic neon HUD</span>
             <span class="chip">🧠 AI difficulty</span>
-            <span class="chip">🛡️ Anti-cheat + error handling</span>
-            <span class="chip">✨ Confetti + neon burst</span>
+            <span class="chip">🎮 Best-of-9</span>
+            <span class="chip">🛡️ Anti-cheat</span>
           </div>
-          <div class="row" style="margin-top:14px;">
-            <button id="enterBtn" style="max-width: 280px;">Boot Arena</button>
+          <div class="row" style="margin-top:12px;">
+            <button id="bootBtn" style="max-width:260px;">BOOT DUEL</button>
             <div style="color:var(--muted); font-size:12px; align-self:center;">
-              Tip: Press <span class="kbd">Space</span> to draw.
+              Press <span class="kbd">↓</span> to shoot.
             </div>
           </div>
         </div>
-
-        <div style="flex:.7; min-width: 240px;">
-          <div class="pill" style="justify-content:center; margin-bottom:10px;">
-            <strong>ATTRACTION MODE</strong> <span style="opacity:.75;">(animated)</span>
-          </div>
-          <div class="pulseRing" aria-hidden="true"></div>
-          <div style="height:10px;"></div>
-          <div class="pill"><span style="width:10px;height:10px;border-radius:999px;background:var(--cyan);box-shadow:0 0 16px rgba(36,246,255,.65);display:inline-block;"></span> System online • Waiting for duel</div>
+        <div style="flex:.7; min-width:240px;">
+          <div class="pill"><strong>HOW TO WIN</strong> <span style="opacity:.75;">first to 5 wins</span></div>
+          <div class="pill" style="margin-top:10px;"><strong>TIP</strong> Don’t flinch. Wait for FIRE.</div>
         </div>
       </div>
     </div>
@@ -562,8 +384,8 @@
     <div class="wrap">
       <div class="titleRow">
         <div>
-          <h1 class="glitch" data-text="NEON QUICKDRAW">NEON QUICKDRAW</h1>
-          <div class="subtitle">Competitive 1v1 reaction duel vs AI • Click DRAW or press Space • False starts lose rounds</div>
+          <h1 class="pixel">NEON QUICKDRAW</h1>
+          <div class="subtitle">Cowboy (You) vs Robot (AI) • Press <span class="kbd">↓</span> or <span class="kbd">Space</span> to shoot • False start loses</div>
           <div class="hud" id="hud"></div>
         </div>
       </div>
@@ -576,90 +398,64 @@
         <div>
           <label for="difficulty">AI Difficulty</label>
           <select id="difficulty">
-            <option value="easy">Easy (slow AI)</option>
+            <option value="easy">Easy (slow robot)</option>
             <option value="normal" selected>Normal</option>
-            <option value="hard">Hard (fast AI)</option>
+            <option value="hard">Hard (fast robot)</option>
           </select>
-        </div>
-        <div>
-          <label for="reducedMotion">Reduced Motion</label>
-          <div class="pill" style="justify-content:space-between;">
-            <span style="color:var(--muted); font-size:12px;">Toggle animations</span>
-            <input id="reducedMotion" type="checkbox" />
-          </div>
         </div>
         <div>
           <label>&nbsp;</label>
           <button id="startBtn">Start Match</button>
         </div>
+        <div>
+          <label>&nbsp;</label>
+          <button id="restartBtn" class="btnGhost">Restart Match</button>
+        </div>
       </div>
 
-      <div class="arena" style="margin-top:14px;">
-        <div class="arenaInner">
-          <div class="signal" id="signalBox">
-            <p class="bigSignal glitch" id="signal" data-text="READY">READY</p>
-            <p class="hint" id="hintText">Press <span class="kbd">Space</span> or click <b>DRAW</b> when you see <b>FIRE!</b>.</p>
-          </div>
-
-          <div class="row" style="width:min(680px,100%);">
-            <button id="drawBtn" class="btnDanger">DRAW</button>
-            <button id="resetBtn" class="btnGhost">Restart Match</button>
-          </div>
-
-          <div class="hud" style="justify-content:center;">
-            <span class="pill"><strong>Anti-cheat:</strong> early draw = FALSE START</span>
-            <span class="pill"><strong>Input:</strong> click or Space (double inputs ignored)</span>
-          </div>
+      <div class="arena">
+        <div class="canvasWrap">
+          <canvas id="game" width="320" height="180" aria-label="Pixel duel scene"></canvas>
         </div>
+      </div>
+
+      <div class="controls">
+        <button id="shootBtn" class="btnDanger">SHOOT (↓ / Space)</button>
+        <button id="muteBtn" class="btnGhost">Sound: ON</button>
+      </div>
+
+      <div class="hud" style="justify-content:center; margin-top:10px;">
+        <span class="pill"><strong>Anti-cheat:</strong> shoot early = FALSE START</span>
+        <span class="pill"><strong>Cutscene:</strong> shoot → muzzle flash → hit → fall</span>
       </div>
     </section>
 
     <aside class="card">
       <div class="row" style="align-items:flex-start;">
-        <div>
+        <div style="flex:1;">
           <div class="pill"><strong>Score</strong> <span style="opacity:.75;">(Best-of-9)</span></div>
-          <div class="stats">
-            <div class="statBox">
-              <div class="statLabel">You</div>
-              <div class="statValue" id="scoreYou">0</div>
-            </div>
-            <div class="statBox">
-              <div class="statLabel">AI</div>
-              <div class="statValue" id="scoreAI">0</div>
-            </div>
-            <div class="statBox">
-              <div class="statLabel">Round</div>
-              <div class="statValue" id="roundNum">1 / 9</div>
-            </div>
+          <div class="row" style="margin-top:10px;">
+            <div class="pill"><strong>You:</strong> <span id="scoreYou">0</span></div>
+            <div class="pill"><strong>AI:</strong> <span id="scoreAI">0</span></div>
+            <div class="pill"><strong>Round:</strong> <span id="roundNum">1/9</span></div>
           </div>
 
-          <div class="pill" style="margin-top:14px;"><strong>Stats</strong> <span style="opacity:.75;">(ms)</span></div>
-          <div class="stats">
-            <div class="statBox">
-              <div class="statLabel">Your Avg Reaction</div>
-              <div class="statValue" id="avgYou">—</div>
-            </div>
-            <div class="statBox">
-              <div class="statLabel">Your Fastest</div>
-              <div class="statValue" id="fastYou">—</div>
-            </div>
-            <div class="statBox">
-              <div class="statLabel">AI Avg Reaction</div>
-              <div class="statValue" id="avgAi">—</div>
-            </div>
+          <div class="pill" style="margin-top:14px;"><strong>Stats</strong> <span style="opacity:.75;">ms</span></div>
+          <div class="row" style="margin-top:10px;">
+            <div class="pill"><strong>Your Avg:</strong> <span id="avgYou">—</span></div>
+            <div class="pill"><strong>Your Fastest:</strong> <span id="fastYou">—</span></div>
+            <div class="pill"><strong>AI Avg:</strong> <span id="avgAi">—</span></div>
           </div>
         </div>
       </div>
 
       <div style="height:12px;"></div>
-
-      <div class="pill"><strong>Training Log</strong> <span style="opacity:.75;">(debug + documentation)</span></div>
+      <div class="pill"><strong>Game Log</strong> <span style="opacity:.75;">(testing + documentation)</span></div>
       <div class="log" id="log" style="margin-top:10px;"></div>
-
       <div style="height:12px;"></div>
       <div class="row">
         <button id="copyLogBtn">Copy Log</button>
-        <button id="muteBtn" class="btnGhost">Sound: ON</button>
+        <button id="clearLogBtn" class="btnGhost">Clear Log</button>
       </div>
     </aside>
   </main>
@@ -668,15 +464,16 @@
 (() => {
   // ---------- DOM ----------
   const $ = (id) => document.getElementById(id);
-  const hudEl = $("hud");
   const toastEl = $("toast");
-  const signalEl = $("signal");
-  const hintEl = $("hintText");
-  const drawBtn = $("drawBtn");
-  const resetBtn = $("resetBtn");
+  const hudEl = $("hud");
+  const logEl = $("log");
+
+  const bootBtn = $("bootBtn");
+  const intro = $("intro");
   const startBtn = $("startBtn");
+  const restartBtn = $("restartBtn");
+  const shootBtn = $("shootBtn");
   const difficultySel = $("difficulty");
-  const reducedMotionChk = $("reducedMotion");
 
   const scoreYouEl = $("scoreYou");
   const scoreAiEl = $("scoreAI");
@@ -685,28 +482,17 @@
   const fastYouEl = $("fastYou");
   const avgAiEl = $("avgAi");
 
-  const logEl = $("log");
   const copyLogBtn = $("copyLogBtn");
+  const clearLogBtn = $("clearLogBtn");
   const muteBtn = $("muteBtn");
 
-  // Button shimmer tracking (for hover glow)
-  document.addEventListener("pointermove", (e) => {
-    const btn = e.target.closest("button");
-    if(!btn) return;
-    const r = btn.getBoundingClientRect();
-    const x = ((e.clientX - r.left) / r.width) * 100;
-    const y = ((e.clientY - r.top) / r.height) * 100;
-    btn.style.setProperty("--x", x + "%");
-    btn.style.setProperty("--y", y + "%");
-  });
-
+  // ---------- Toast + Log ----------
   function toast(msg){
     toastEl.textContent = msg;
     toastEl.classList.remove("show");
     void toastEl.offsetWidth;
     toastEl.classList.add("show");
   }
-
   function log(msg, cls=""){
     const line = document.createElement("div");
     if(cls) line.className = cls;
@@ -716,18 +502,16 @@
     logEl.scrollTop = logEl.scrollHeight;
   }
 
-  // ---------- Audio (Web Audio beeps, no external files) ----------
+  // ---------- Audio (beeps, no external files) ----------
   let audioCtx = null;
   let muted = false;
-
   function ensureAudio(){
     if (audioCtx) return;
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     audioCtx = new AC();
   }
-
-  function beep(freq=660, durMs=70, type="sine", gain=0.06){
+  function beep(freq=660, durMs=70, type="square", gain=0.05){
     if (muted) return;
     try{
       ensureAudio();
@@ -741,119 +525,69 @@
       g.connect(audioCtx.destination);
       o.start();
       o.stop(audioCtx.currentTime + durMs/1000);
-    }catch{ /* ignore audio errors */ }
+    }catch{}
   }
-
   muteBtn.addEventListener("click", () => {
     muted = !muted;
     muteBtn.textContent = muted ? "Sound: OFF" : "Sound: ON";
     toast(muted ? "Sound muted." : "Sound enabled.");
   });
 
-  // ---------- Reduced motion toggle ----------
-  function applyReducedMotion(on){
-    // quick-and-safe: add inline style disabling animations
-    document.documentElement.style.scrollBehavior = on ? "auto" : "smooth";
-    const sheets = document.styleSheets;
-    // We won't mutate stylesheets (can throw security errors).
-    // Instead, set a flag and avoid heavy FX updates (confetti/bursts) when reduced.
-    state.reducedMotion = on;
-    toast(on ? "Reduced motion ON" : "Reduced motion OFF");
-  }
-  reducedMotionChk.addEventListener("change", () => applyReducedMotion(reducedMotionChk.checked));
-
-  // ---------- Confetti + Neon Burst FX ----------
-  const canvas = $("fx");
+  // ---------- Pixel Canvas Setup ----------
+  const canvas = $("game");
   const ctx = canvas.getContext("2d");
-  function resizeCanvas(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
+  ctx.imageSmoothingEnabled = false;
 
-  let particles = [];
-  function spawnBurst(x, y, count=90){
-    if(state.reducedMotion) return;
-    for(let i=0;i<count;i++){
-      particles.push({
-        x, y,
-        vx: (Math.random()*2-1) * (4 + Math.random()*4),
-        vy: (Math.random()*2-1) * (4 + Math.random()*4),
-        g: 0.10 + Math.random()*0.12,
-        life: 70 + Math.random()*40,
-        a: 1,
-        r: 2 + Math.random()*3,
-        rot: Math.random()*Math.PI*2,
-        spin: (Math.random()*2-1)*0.25
-      });
-    }
-  }
-
-  function tickFx(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    particles = particles.filter(p => p.life > 0 && p.a > 0);
-    for(const p of particles){
-      p.life -= 1;
-      p.vy += p.g;
-      p.x += p.vx;
-      p.y += p.vy;
-      p.rot += p.spin;
-      p.a = Math.max(0, p.a - 0.015);
-
-      ctx.save();
-      ctx.globalAlpha = p.a;
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-
-      // Neon-ish rectangles (no fixed palette needed, but use subtle glow)
-      ctx.fillStyle = "rgba(36,246,255,.75)";
-      ctx.fillRect(-p.r, -p.r, p.r*2.2, p.r*1.2);
-      ctx.fillStyle = "rgba(178,91,255,.55)";
-      ctx.fillRect(-p.r*0.7, -p.r*0.7, p.r*1.4, p.r*0.9);
-
-      ctx.restore();
-    }
-    requestAnimationFrame(tickFx);
-  }
-  tickFx();
-
-  function centerBurst(){
-    spawnBurst(window.innerWidth * 0.5, 140, 130);
-  }
+  // Low-res pixel scene coordinates: 320x180
+  const W = canvas.width, H = canvas.height;
 
   // ---------- Game State ----------
   const state = {
     started: false,
     inRound: false,
-    waitingForFire: false,
+    waiting: false,
     fireShown: false,
-    locked: false,          // prevents double input
-    reducedMotion: false,
-
+    locked: false,          // double input prevention
     round: 1,
     maxRounds: 9,
-
     scoreYou: 0,
     scoreAI: 0,
 
-    fireTime: 0,            // performance.now() when FIRE displayed
-    aiReactMs: 0,           // sampled AI reaction time this round
-    aiTimer: null,          // setTimeout handle
-    fireTimer: null,        // setTimeout handle
-    countdownTimer: null,   // setTimeout handle
+    fireTime: 0,
+    aiReactMs: 0,
+    aiTimer: null,
+    fireTimer: null,
+    countdownTimer: null,
 
-    youTimes: [],           // valid reaction times (ms)
-    aiTimes: [],            // AI reaction times for rounds AI "wins" or "plays"? We'll record each round.
+    youTimes: [],
+    aiTimes: [],
     youFastest: null,
+
+    // cutscene / animation:
+    scene: "idle",          // idle | countdown | wait | fire | you_shoot | ai_shoot | hit | win | lose | match_over
+    sceneT: 0,
+    message: "BOOT TO BEGIN",
+    sub: "Press Start Match when ready.",
+    // characters:
+    cowboy: { x: 86, y: 98, pose:"idle", hp:1, hit:false, fall:0 },
+    robot:  { x: 234, y: 90, pose:"idle", hp:1, hit:false, fall:0 },
+    // bullet/tracer:
+    tracer: null,           // {x1,y1,x2,y2,t}
+    sparks: [],
+    confetti: []
   };
 
-  function setSignal(text, sub, glitch=true){
-    signalEl.textContent = text;
-    signalEl.setAttribute("data-text", text);
-    signalEl.classList.toggle("glitch", !!glitch);
-    hintEl.innerHTML = sub;
+  function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
+
+  function clearTimers(){
+    if(state.aiTimer){ clearTimeout(state.aiTimer); state.aiTimer=null; }
+    if(state.fireTimer){ clearTimeout(state.fireTimer); state.fireTimer=null; }
+    if(state.countdownTimer){ clearTimeout(state.countdownTimer); state.countdownTimer=null; }
+  }
+
+  function avg(arr){
+    if(!arr.length) return null;
+    return Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
   }
 
   function updateHUD(){
@@ -863,7 +597,7 @@
       `You: ${state.scoreYou}`,
       `AI: ${state.scoreAI}`,
       `Difficulty: ${difficultySel.value.toUpperCase()}`,
-      `Input: Click / Space`
+      `Shoot: ↓ or Space`
     ];
     for(const t of pills){
       const s = document.createElement("span");
@@ -874,217 +608,361 @@
 
     scoreYouEl.textContent = String(state.scoreYou);
     scoreAiEl.textContent = String(state.scoreAI);
-    roundNumEl.textContent = `${state.round} / ${state.maxRounds}`;
+    roundNumEl.textContent = `${state.round}/${state.maxRounds}`;
 
-    // stats
-    const avg = (arr) => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
     const youAvg = avg(state.youTimes);
-    const aiAvg = avg(state.aiTimes);
-
-    avgYouEl.textContent = youAvg === null ? "—" : `${youAvg}`;
-    avgAiEl.textContent = aiAvg === null ? "—" : `${aiAvg}`;
-    fastYouEl.textContent = state.youFastest === null ? "—" : `${Math.round(state.youFastest)}`;
+    const aiAvgV = avg(state.aiTimes);
+    avgYouEl.textContent = youAvg === null ? "—" : String(youAvg);
+    avgAiEl.textContent = aiAvgV === null ? "—" : String(aiAvgV);
+    fastYouEl.textContent = state.youFastest === null ? "—" : String(Math.round(state.youFastest));
   }
 
-  function clamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
-
-  // AI reaction time distribution (ms)
-  // We use a skewed normal-ish (sum of uniforms) to feel human-like.
+  // ---------- AI reaction distribution ----------
   function sampleAiReactionMs(diff){
-    // base means roughly match your class demo: easy slower, hard faster
     let base, spread;
-    if(diff === "easy"){ base = 360; spread = 140; }
-    else if(diff === "hard"){ base = 210; spread = 90; }
-    else { base = 280; spread = 110; }
+    if(diff === "easy"){ base = 380; spread = 150; }
+    else if(diff === "hard"){ base = 220; spread = 95; }
+    else { base = 300; spread = 120; }
 
-    // sum of 6 uniforms -> approx normal around 3
+    // pseudo-normal from sum of uniforms
     let u = 0;
     for(let i=0;i<6;i++) u += Math.random();
-    u = (u/6) - 0.5; // -0.5..0.5-ish
-    let ms = base + u * spread;
+    u = (u/6) - 0.5;
 
-    // add a tiny chance of "super reaction" or "hesitation" to make it interesting
-    if(Math.random() < 0.06) ms -= 70;   // lucky
-    if(Math.random() < 0.06) ms += 90;   // hesitation
+    let ms = base + u*spread;
+    if(Math.random() < 0.06) ms -= 70;
+    if(Math.random() < 0.06) ms += 90;
 
-    ms = clamp(ms, diff === "hard" ? 140 : 170, 650);
+    ms = clamp(ms, diff==="hard"?150:180, 650);
     return Math.round(ms);
   }
 
-  function clearTimers(){
-    if(state.aiTimer){ clearTimeout(state.aiTimer); state.aiTimer = null; }
-    if(state.fireTimer){ clearTimeout(state.fireTimer); state.fireTimer = null; }
-    if(state.countdownTimer){ clearTimeout(state.countdownTimer); state.countdownTimer = null; }
+  // ---------- Pixel Drawing Helpers ----------
+  function pxFill(x,y,w,h,c){
+    ctx.fillStyle = c;
+    ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(w), Math.floor(h));
+  }
+  function pxText(text, x, y, c="#eaf2ff"){
+    ctx.fillStyle = c;
+    ctx.font = "12px ui-monospace, Menlo, Consolas, monospace";
+    ctx.fillText(text, x|0, y|0);
   }
 
-  function disableRoundInputs(disabled){
-    drawBtn.disabled = disabled;
+  function drawNeonSky(t){
+    // pixel gradient bands
+    pxFill(0,0,W,H,"#07081a");
+    // horizon glow
+    const glow = 0.35 + 0.25*Math.sin(t*0.0012);
+    pxFill(0, 88, W, 40, `rgba(36,246,255,${0.06+glow*0.05})`);
+    pxFill(0, 96, W, 36, `rgba(178,91,255,${0.05+glow*0.04})`);
+
+    // stars
+    for(let i=0;i<28;i++){
+      const sx = (i*37 + (t*0.01)) % W;
+      const sy = (i*19) % 70;
+      pxFill(sx, sy, 1, 1, "rgba(255,255,255,.55)");
+    }
+
+    // neon city silhouette (pixel blocks)
+    for(let x=0;x<W;x+=8){
+      const h = 16 + Math.floor(10*Math.abs(Math.sin((x*0.02)+t*0.0008)));
+      pxFill(x, 88-h, 7, h, "rgba(0,0,0,.72)");
+      // windows
+      if((x/8)%3===0){
+        pxFill(x+2, 88-h+4, 1, 1, `rgba(36,246,255,${0.18+0.08*Math.sin(t*0.002 + x)})`);
+        pxFill(x+4, 88-h+9, 1, 1, `rgba(178,91,255,${0.14+0.08*Math.sin(t*0.002 + x*0.7)})`);
+      }
+    }
+
+    // ground
+    pxFill(0, 120, W, 60, "rgba(0,0,0,.65)");
+    // neon floor grid lines
+    const shift = Math.floor((t*0.06)%8);
+    for(let y=122;y<H;y+=8){
+      const alpha = (y-120)/60;
+      pxFill(0, y, W, 1, `rgba(36,246,255,${0.04+alpha*0.08})`);
+    }
+    for(let x=0;x<W;x+=16){
+      pxFill((x+shift)%W, 120, 1, 60, "rgba(178,91,255,.06)");
+    }
+  }
+
+  // Simple pixel sprites using rectangles
+  function drawCowboy(t){
+    const c = state.cowboy;
+    const fall = c.fall; // 0..1
+    const y = c.y + fall*28;
+    const x = c.x;
+
+    // shadow
+    pxFill(x-10, 126, 20, 3, "rgba(0,0,0,.45)");
+
+    // body palette
+    const hat = "#caa06a";
+    const coat = "#7dff9c";
+    const pants = "#1b1f3c";
+    const skin = "#ffccaa";
+
+    const wob = Math.sin(t*0.006)*1;
+
+    // falling tilt illusion: offset a bit
+    const ox = fall*10;
+
+    // hat
+    pxFill(x-10+ox, y-18+wob, 22, 4, hat);
+    pxFill(x-4+ox,  y-24+wob, 10, 6, hat);
+    // head
+    pxFill(x-3+ox, y-18+wob, 8, 7, skin);
+    // coat
+    pxFill(x-7+ox, y-10+wob, 14, 14, coat);
+    // arm + gun
+    if(c.pose==="shoot"){
+      pxFill(x+6+ox, y-6+wob, 8, 3, coat);
+      pxFill(x+14+ox, y-5+wob, 5, 2, "#d7dbe8"); // gun
+      // muzzle flash is handled elsewhere
+    }else{
+      pxFill(x+4+ox, y-6+wob, 6, 3, coat);
+      pxFill(x+10+ox, y-5+wob, 4, 2, "#d7dbe8");
+    }
+    // pants
+    pxFill(x-6+ox, y+4+wob, 12, 10, pants);
+    // boots
+    pxFill(x-7+ox, y+14+wob, 6, 3, "#0b1020");
+    pxFill(x+1+ox, y+14+wob, 6, 3, "#0b1020");
+
+    // hit indicator
+    if(c.hit){
+      pxFill(x-12, y-26, 2, 2, "rgba(255,107,138,.9)");
+      pxFill(x+12, y-20, 2, 2, "rgba(255,107,138,.9)");
+    }
+  }
+
+  function drawRobot(t){
+    const r = state.robot;
+    const fall = r.fall;
+    const y = r.y + fall*28;
+    const x = r.x;
+
+    // shadow
+    pxFill(x-12, 126, 24, 3, "rgba(0,0,0,.45)");
+
+    const metal = "#c7cfe4";
+    const glow = 0.55 + 0.35*Math.sin(t*0.008);
+    const eye = `rgba(36,246,255,${0.55+glow*0.25})`;
+    const core = `rgba(178,91,255,${0.45+glow*0.25})`;
+
+    const wob = Math.sin(t*0.006+1.1)*1;
+
+    const ox = -fall*10;
+
+    // head
+    pxFill(x-8+ox, y-24+wob, 16, 12, metal);
+    // eyes
+    pxFill(x-5+ox, y-20+wob, 4, 2, eye);
+    pxFill(x+1+ox, y-20+wob, 4, 2, eye);
+    // antenna
+    pxFill(x-1+ox, y-30+wob, 2, 6, metal);
+    pxFill(x-2+ox, y-32+wob, 4, 2, eye);
+
+    // torso
+    pxFill(x-10+ox, y-12+wob, 20, 18, metal);
+    // core
+    pxFill(x-3+ox, y-6+wob, 6, 6, core);
+
+    // arm + blaster
+    if(r.pose==="shoot"){
+      pxFill(x-18+ox, y-8+wob, 10, 3, metal);
+      pxFill(x-24+ox, y-7+wob, 6, 2, eye); // blaster glow
+    }else{
+      pxFill(x-16+ox, y-8+wob, 8, 3, metal);
+      pxFill(x-20+ox, y-7+wob, 4, 2, eye);
+    }
+
+    // legs
+    pxFill(x-8+ox, y+6+wob, 6, 12, "#8a95b6");
+    pxFill(x+2+ox, y+6+wob, 6, 12, "#8a95b6");
+
+    // hit sparks
+    if(r.hit){
+      pxFill(x-12, y-28, 2, 2, "rgba(255,210,138,.95)");
+      pxFill(x+12, y-22, 2, 2, "rgba(255,210,138,.95)");
+    }
+  }
+
+  function drawHUDText(){
+    // Top center banner in pixel style
+    const msg = state.message;
+    const sub = state.sub;
+
+    // banner box
+    pxFill(40, 10, 240, 28, "rgba(0,0,0,.55)");
+    pxFill(40, 10, 240, 1, "rgba(36,246,255,.35)");
+    pxFill(40, 37, 240, 1, "rgba(178,91,255,.28)");
+
+    pxText(msg, 52, 28, "#eaf2ff");
+    ctx.font = "10px ui-monospace, Menlo, Consolas, monospace";
+    ctx.fillStyle = "rgba(245,250,255,.78)";
+    ctx.fillText(sub, 52, 36);
+  }
+
+  function addSparks(x,y,count=10){
+    for(let i=0;i<count;i++){
+      state.sparks.push({
+        x, y,
+        vx: (Math.random()*2-1)*1.4,
+        vy: (Math.random()*2-1)*1.2,
+        life: 18 + Math.random()*10
+      });
+    }
+  }
+
+  function drawSparks(){
+    for(const s of state.sparks){
+      pxFill(s.x, s.y, 1, 1, "rgba(255,210,138,.95)");
+      pxFill(s.x+1, s.y, 1, 1, "rgba(36,246,255,.55)");
+      s.x += s.vx;
+      s.y += s.vy;
+      s.vy += 0.05;
+      s.life -= 1;
+    }
+    state.sparks = state.sparks.filter(s => s.life > 0);
+  }
+
+  function spawnPixelConfetti(count=120){
+    for(let i=0;i<count;i++){
+      state.confetti.push({
+        x: W/2, y: 40,
+        vx: (Math.random()*2-1)*2.2,
+        vy: (Math.random()*-1)*3.2 - 0.8,
+        g: 0.08 + Math.random()*0.04,
+        life: 80 + Math.random()*60,
+        c: (i%3===0) ? "rgba(36,246,255,.9)" : (i%3===1) ? "rgba(178,91,255,.85)" : "rgba(125,255,156,.85)"
+      });
+    }
+  }
+
+  function drawConfetti(){
+    for(const p of state.confetti){
+      pxFill(p.x, p.y, 2, 2, p.c);
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.g;
+      p.life -= 1;
+    }
+    state.confetti = state.confetti.filter(p => p.life > 0 && p.y < H+10);
+  }
+
+  function drawTracer(){
+    if(!state.tracer) return;
+    const tr = state.tracer;
+    // draw dotted tracer
+    const dx = tr.x2 - tr.x1;
+    const dy = tr.y2 - tr.y1;
+    const steps = 18;
+    for(let i=0;i<steps;i++){
+      const a = i/steps;
+      const x = tr.x1 + dx*a;
+      const y = tr.y1 + dy*a;
+      if(i%2===0) pxFill(x, y, 2, 1, "rgba(36,246,255,.85)");
+      else pxFill(x, y, 2, 1, "rgba(178,91,255,.65)");
+    }
+    tr.t -= 1;
+    if(tr.t <= 0) state.tracer = null;
+  }
+
+  // ---------- Core Round Logic ----------
+  function setMessage(msg, sub){
+    state.message = msg;
+    state.sub = sub;
+  }
+
+  function resetCharacters(){
+    state.cowboy.pose = "idle"; state.cowboy.hit = false; state.cowboy.fall = 0;
+    state.robot.pose = "idle";  state.robot.hit = false;  state.robot.fall = 0;
+    state.tracer = null;
+    state.sparks = [];
   }
 
   function resetRoundFlags(){
     state.inRound = true;
-    state.waitingForFire = true;
+    state.waiting = true;
     state.fireShown = false;
     state.locked = false;
     state.fireTime = 0;
     state.aiReactMs = 0;
+    resetCharacters();
   }
 
-  function matchOver(){
-    state.started = false;
-    state.inRound = false;
-    clearTimers();
-    disableRoundInputs(true);
+  function scheduleFire(){
+    // suspense delay
+    const delay = Math.floor(900 + Math.random() * 1600);
 
-    const youWin = state.scoreYou > state.scoreAI;
-    const title = youWin ? "YOU WIN THE MATCH" : "AI WINS THE MATCH";
-    setSignal(title, `Final: <b>You ${state.scoreYou}</b> — <b>AI ${state.scoreAI}</b>. Press <b>Restart Match</b> to play again.`, true);
-    toast(youWin ? "Victory!" : "Defeat!");
+    state.fireTimer = setTimeout(() => {
+      if(!state.inRound || state.locked) return;
 
-    // big FX
-    beep(880, 90, "triangle", 0.06);
-    beep(660, 120, "sine", 0.05);
-    centerBurst();
-    spawnBurst(window.innerWidth*0.5, window.innerHeight*0.35, 180);
-    log(`MATCH OVER • You ${state.scoreYou} — AI ${state.scoreAI}`, "warn");
+      state.fireShown = true;
+      state.waiting = false;
+      state.fireTime = performance.now();
+
+      setMessage("FIRE!", "SHOOT NOW (↓ / Space)");
+      beep(980, 90, "square", 0.05);
+
+      // sample AI reaction and schedule it
+      state.aiReactMs = sampleAiReactionMs(difficultySel.value);
+      state.aiTimer = setTimeout(() => {
+        if(!state.inRound || state.locked) return;
+        state.locked = true;
+        // AI shoots cutscene
+        doShoot("ai", null, Math.max(0, performance.now() - state.fireTime));
+      }, state.aiReactMs);
+    }, delay);
   }
 
-  function awardRound(winner, reason, youMs=null, aiMs=null){
-    // winner: "you" | "ai"
-    state.inRound = false;
-    clearTimers();
-    disableRoundInputs(true);
+  async function countdownThenWait(){
+    // 3..2..1.. READY
+    const steps = ["3","2","1","READY"];
+    let idx = 0;
 
-    if(winner === "you"){
-      state.scoreYou += 1;
-      if(typeof youMs === "number"){
-        state.youTimes.push(youMs);
-        state.youFastest = (state.youFastest === null) ? youMs : Math.min(state.youFastest, youMs);
-      }
-      if(typeof aiMs === "number") state.aiTimes.push(aiMs);
-
-      setSignal("ROUND WIN", `You drew in <b>${Math.round(youMs)}ms</b>. AI: <b>${Math.round(aiMs)}ms</b>. ${reason}`, true);
-      toast("You win the round!");
-      log(`Round ${state.round}: YOU WIN • you=${Math.round(youMs)}ms, ai=${Math.round(aiMs)}ms • ${reason}`, "good");
-      beep(880, 80, "triangle", 0.06);
-      spawnBurst(window.innerWidth*0.5, 160, 120);
-    }else{
-      state.scoreAI += 1;
-      if(typeof aiMs === "number") state.aiTimes.push(aiMs);
-
-      // false start => youMs null
-      const extra = (typeof youMs === "number") ? `You: <b>${Math.round(youMs)}ms</b>. ` : "";
-      setSignal("ROUND LOST", `${extra}AI: <b>${Math.round(aiMs)}ms</b>. ${reason}`, true);
-      toast("AI wins the round.");
-      log(`Round ${state.round}: AI WINS • you=${youMs===null?"—":Math.round(youMs)+"ms"}, ai=${Math.round(aiMs)}ms • ${reason}`, "bad");
-      beep(220, 120, "sawtooth", 0.05);
-      spawnBurst(window.innerWidth*0.5, 160, 80);
-    }
-
-    updateHUD();
-
-    // advance round or end match
-    const roundsPlayed = state.scoreYou + state.scoreAI;
-    const max = state.maxRounds;
-
-    // If a player is unreachable by remaining rounds, end early (best-of-9 logic)
-    const remaining = max - roundsPlayed;
-    const youLead = state.scoreYou - state.scoreAI;
-    const aiLead = state.scoreAI - state.scoreYou;
-    const youClinched = youLead > remaining;
-    const aiClinched = aiLead > remaining;
-
-    if(roundsPlayed >= max || youClinched || aiClinched){
-      matchOver();
-      return;
-    }
-
-    // Next round
-    state.round = roundsPlayed + 1;
-    updateHUD();
-
-    // quick auto-continue after a moment
-    state.countdownTimer = setTimeout(() => startRound(), 900);
-  }
-
-  function showCountdown(n){
-    if(state.reducedMotion){
-      setSignal("GET READY", `Round ${state.round} • Waiting for signal…`, true);
-      return Promise.resolve();
-    }
     return new Promise((resolve) => {
-      const steps = [3,2,1];
-      let idx = 0;
-
       const tick = () => {
+        if(!state.inRound) return;
         const v = steps[idx];
-        setSignal(String(v), `Round ${state.round} • Don’t draw early.`, true);
-        beep(440 + v*80, 60, "sine", 0.05);
-        idx++;
-        if(idx >= steps.length){
-          setSignal("READY", `Round ${state.round} • Wait for <b>FIRE!</b> then draw.`, true);
+        if(v === "READY"){
+          setMessage("READY", "DON'T SHOOT EARLY");
+          beep(620, 55, "sine", 0.04);
           resolve();
           return;
+        }else{
+          setMessage(v, "STEADY…");
+          beep(440 + (3-idx)*90, 55, "sine", 0.04);
         }
+        idx++;
         state.countdownTimer = setTimeout(tick, 520);
       };
-
       tick();
     });
   }
 
-  function scheduleFire(){
-    // random delay (ms) until FIRE appears
-    // keep it suspenseful
-    const min = 900;
-    const max = 2400;
-    const delay = Math.floor(min + Math.random() * (max - min + 1));
-
-    state.fireTimer = setTimeout(() => {
-      if(!state.inRound) return;
-      state.fireShown = true;
-      state.waitingForFire = false;
-      state.fireTime = performance.now();
-
-      // show FIRE
-      setSignal("FIRE!", `CLICK <b>DRAW</b> or press <span class="kbd">Space</span> NOW!`, true);
-      beep(980, 90, "square", 0.05);
-      spawnBurst(window.innerWidth * 0.5, 160, 70);
-
-      // schedule AI draw
-      const diff = difficultySel.value;
-      state.aiReactMs = sampleAiReactionMs(diff);
-
-      state.aiTimer = setTimeout(() => {
-        if(!state.inRound || state.locked) return;
-        // AI draws; if player hasn't drawn yet, AI wins
-        state.locked = true;
-        const aiMs = Math.max(0, performance.now() - state.fireTime); // defensive
-        awardRound("ai", "AI fired first.", null, aiMs);
-      }, state.aiReactMs);
-
-    }, delay);
-  }
-
-  async function startRound(){
+  function startRound(){
     clearTimers();
     resetRoundFlags();
-    disableRoundInputs(false);
+    shootBtn.disabled = false;
 
-    // pre-signal display
-    setSignal("READY", `Round ${state.round} • Wait… don’t draw early.`, true);
+    setMessage("ROUND " + state.round, "GET READY…");
     log(`Round ${state.round} started. Waiting for FIRE.`, "warn");
+    beep(660, 60, "triangle", 0.04);
 
-    await showCountdown();
-
-    // now schedule fire
-    scheduleFire();
+    countdownThenWait().then(() => {
+      if(!state.inRound) return;
+      setMessage("WAIT…", "HOLD IT…");
+      scheduleFire();
+    });
   }
 
   function startMatch(){
-    ensureAudio(); // initialize on user gesture for browsers that block auto audio
-    clearTimers();
+    ensureAudio();
 
+    clearTimers();
     state.started = true;
     state.round = 1;
     state.scoreYou = 0;
@@ -1093,12 +971,11 @@
     state.aiTimes = [];
     state.youFastest = null;
 
-    updateHUD();
-    toast("Match started!");
     logEl.innerHTML = "";
     log("Starting new match (Best-of-9).", "warn");
-    log("Anti-cheat enabled: early draw = FALSE START.", "warn");
-    beep(660, 70, "triangle", 0.05);
+    log("Anti-cheat enabled: shooting early = FALSE START.", "warn");
+    toast("Match started!");
+    updateHUD();
 
     startRound();
   }
@@ -1109,119 +986,122 @@
     startMatch();
   }
 
-  // Anti-cheat + input handling
-  function handleDrawInput(source){
-    // Error handling: ignore input if match not started
-    if(!state.started){
-      toast("Press Start Match first.");
-      beep(260, 60, "sine", 0.03);
-      return;
-    }
-    if(!state.inRound){
-      // ignore spam/double clicks
-      return;
-    }
-    if(state.locked){
-      // double input prevention
-      return;
-    }
+  function endMatch(){
+    state.started = false;
+    state.inRound = false;
+    shootBtn.disabled = true;
+    clearTimers();
 
-    // If FIRE hasn't shown yet => FALSE START (automatic loss)
-    if(!state.fireShown){
-      state.locked = true;
-      clearTimers(); // cancel pending FIRE/AI
-      disableRoundInputs(true);
+    const youWin = state.scoreYou > state.scoreAI;
+    setMessage(youWin ? "MATCH WIN" : "MATCH LOST", `Final: You ${state.scoreYou} — AI ${state.scoreAI}`);
+    toast(youWin ? "Victory!" : "Defeat!");
+    log(`MATCH OVER • You ${state.scoreYou} — AI ${state.scoreAI}`, "warn");
+    beep(youWin ? 880 : 220, 160, youWin ? "triangle" : "sawtooth", 0.06);
+    spawnPixelConfetti(youWin ? 170 : 90);
+  }
 
-      // AI "reaction" isn't relevant, but show a typical time for flavor
-      const aiMs = sampleAiReactionMs(difficultySel.value);
-      awardRound("ai", `FALSE START (${source}). You drew before FIRE.`, null, aiMs);
-      return;
+  function awardRound(winner, youMs, aiMs, reason){
+    // record times
+    if(typeof aiMs === "number" && Number.isFinite(aiMs)) state.aiTimes.push(aiMs);
+    if(typeof youMs === "number" && Number.isFinite(youMs)){
+      state.youTimes.push(youMs);
+      state.youFastest = (state.youFastest === null) ? youMs : Math.min(state.youFastest, youMs);
     }
 
-    // Valid draw
-    state.locked = true;
-
-    // Compute reaction time safely
-    const now = performance.now();
-    let youMs = now - state.fireTime;
-
-    // prevent negative times (defensive)
-    if(!Number.isFinite(youMs) || youMs < 0) youMs = 0;
-
-    // AI time for comparison: the sampled one, but we’ll use actual elapsed too
-    const aiActualMs = Math.max(0, now - state.fireTime);
-
-    // Determine winner: compare player time vs AI sampled time
-    // Use the sampled AI reaction as "AI fires at that time"
-    const aiMs = state.aiReactMs;
-
-    // If player is faster than AI sampled time => player wins
-    if(youMs < aiMs){
-      awardRound("you", `Clean draw (${source}).`, youMs, aiMs);
-    }else if(youMs > aiMs){
-      awardRound("ai", `AI edged you out (${source}).`, youMs, aiMs);
+    if(winner === "you"){
+      state.scoreYou++;
+      toast("You win the round!");
+      log(`Round ${state.round}: YOU WIN • you=${youMs===null?"—":Math.round(youMs)}ms, ai=${Math.round(aiMs)}ms • ${reason}`, "good");
+      beep(880, 90, "triangle", 0.06);
     }else{
-      // tie-breaker: player wins ties (feels fair)
-      awardRound("you", `Photo finish (${source}) — tie goes to human.`, youMs, aiMs);
+      state.scoreAI++;
+      toast("AI wins the round.");
+      log(`Round ${state.round}: AI WINS • you=${youMs===null?"—":Math.round(youMs)}ms, ai=${Math.round(aiMs)}ms • ${reason}`, "bad");
+      beep(220, 120, "sawtooth", 0.05);
+    }
+
+    updateHUD();
+
+    const roundsPlayed = state.scoreYou + state.scoreAI;
+    const remaining = state.maxRounds - roundsPlayed;
+    const youLead = state.scoreYou - state.scoreAI;
+    const aiLead = state.scoreAI - state.scoreYou;
+    const youClinched = youLead > remaining;
+    const aiClinched = aiLead > remaining;
+
+    if(roundsPlayed >= state.maxRounds || youClinched || aiClinched){
+      endMatch();
+      return;
+    }
+
+    state.round = roundsPlayed + 1;
+    updateHUD();
+
+    // short delay then next round
+    setTimeout(() => {
+      if(state.started) startRound();
+    }, 1100);
+  }
+
+  // ---------- Cutscene: shooting ----------
+  function doShoot(who, youMs, aiMs){
+    // who: "you" or "ai"
+    state.inRound = false;
+    shootBtn.disabled = true;
+    clearTimers();
+
+    // set poses
+    state.cowboy.pose = (who === "you") ? "shoot" : "idle";
+    state.robot.pose  = (who === "ai")  ? "shoot" : "idle";
+
+    // tracer + hit + fall timeline
+    const cowboyMuzzle = { x: state.cowboy.x + 18, y: state.cowboy.y - 6 };
+    const robotMuzzle  = { x: state.robot.x - 22,  y: state.robot.y - 7 };
+    const robotHit     = { x: state.robot.x - 6,   y: state.robot.y - 16 };
+    const cowboyHit    = { x: state.cowboy.x + 6,  y: state.cowboy.y - 14 };
+
+    // Determine winner based on who fired first
+    if(who === "you"){
+      // you shoot robot
+      setMessage("BANG!", `You: ${Math.round(youMs)}ms • AI: ${Math.round(aiMs)}ms`);
+      state.tracer = { x1: cowboyMuzzle.x, y1: cowboyMuzzle.y, x2: robotHit.x, y2: robotHit.y, t: 10 };
+      addSparks(robotHit.x, robotHit.y, 18);
+      state.robot.hit = true;
+
+      // robot falls
+      setTimeout(() => { state.robot.fall = 0.35; }, 120);
+      setTimeout(() => { state.robot.fall = 0.75; }, 260);
+      setTimeout(() => { state.robot.fall = 1.00; }, 430);
+
+      // celebrate
+      setTimeout(() => { spawnPixelConfetti(110); }, 520);
+
+      // award after animation
+      setTimeout(() => {
+        awardRound("you", youMs, aiMs, "Clean draw.");
+        // reset poses next round starts
+      }, 820);
+
+    } else {
+      // ai shoots cowboy
+      setMessage("ZAP!", `AI: ${Math.round(aiMs)}ms`);
+      state.tracer = { x1: robotMuzzle.x, y1: robotMuzzle.y, x2: cowboyHit.x, y2: cowboyHit.y, t: 10 };
+      addSparks(cowboyHit.x, cowboyHit.y, 18);
+      state.cowboy.hit = true;
+
+      setTimeout(() => { state.cowboy.fall = 0.35; }, 120);
+      setTimeout(() => { state.cowboy.fall = 0.75; }, 260);
+      setTimeout(() => { state.cowboy.fall = 1.00; }, 430);
+
+      setTimeout(() => {
+        awardRound("ai", youMs, aiMs, (youMs===null) ? "False start." : "AI fired first.");
+      }, 820);
     }
   }
 
-  // ---------- Events ----------
-  $("enterBtn").addEventListener("click", () => {
-    $("intro").style.display = "none";
-    toast("Arena booted. Start a match!");
-    beep(520, 60, "sine", 0.04);
-  });
-
-  startBtn.addEventListener("click", startMatch);
-  resetBtn.addEventListener("click", restartMatch);
-
-  drawBtn.addEventListener("click", () => handleDrawInput("click"));
-
-  // Spacebar input (prevent scrolling)
-  window.addEventListener("keydown", (e) => {
-    if(e.code === "Space"){
-      e.preventDefault();
-      handleDrawInput("space");
-    }
-  }, { passive: false });
-
-  // Copy log for documentation
-  copyLogBtn.addEventListener("click", async () => {
-    try{
-      const text = Array.from(logEl.children).map(d => d.textContent).join("\n");
-      await navigator.clipboard.writeText(text);
-      toast("Log copied!");
-      log("Log copied to clipboard.", "good");
-      beep(740, 60, "sine", 0.04);
-    }catch{
-      toast("Clipboard blocked — copy manually.");
-      log("Clipboard blocked by browser settings.", "warn");
-      beep(240, 60, "sine", 0.03);
-    }
-  });
-
-  // Difficulty change: applies immediately for next rounds (safe)
-  difficultySel.addEventListener("change", () => {
-    toast(`Difficulty: ${difficultySel.value.toUpperCase()}`);
-    log(`Difficulty set to ${difficultySel.value}.`, "warn");
-    updateHUD();
-  });
-
-  // Reduced motion
-  reducedMotionChk.addEventListener("change", () => applyReducedMotion(reducedMotionChk.checked));
-
-  // Start with inputs disabled until match starts
-  disableRoundInputs(true);
-  updateHUD();
-  setSignal("READY", `Press <b>Start Match</b>. Then wait for <b>FIRE!</b>.`, true);
-  log("Boot screen ready. Click BOOT ARENA, then Start Match.", "warn");
-
-  // Celebrate win with confetti burst already wired in matchOver()
-
-})();
-</script>
-</body>
-</html>
-
-
+  // Input handling (anti-cheat + double input)
+  function handleShootInput(source){
+    if(!state.started){
+      toast("Press Start Match first.");
+      beep(260, 60, "sine", 0.03);
+      r
